@@ -39,6 +39,7 @@ except:
 originalSheet = excelfile.Sheet_data
 rows = excelfile.Sheet_data.nrows
 
+# 查看原始数据
 # print('+++++++++++++++++++++++',rows)
 # for i in range(rows):
 #   print(excelfile.Sheet_data.row_values(i))
@@ -46,34 +47,44 @@ rows = excelfile.Sheet_data.nrows
 
 for row in range(rows):
 
+  compnum = 0
   # 使用pandas判断是否写入
   # if type(df.values[row,1]) != str or row == None :
   #   if type(df.values[row,0]) == str :
   #     companyname = str(df.values[row,0]) +'new'
   #     excelfile.write(0,row+1,1,companyname) # write函数和pd的readexce行数不匹配所以row+1
 
+  # 使用xldt判断是否写入
   shortname = originalSheet.cell(row,0).value
   fullname = originalSheet.cell(row,1).value
-  # 使用xldt判断是否写入
+  
   if fullname == '' or fullname == None :
     if shortname != '' :
 
       print('---------------------------------------------------------------------')
       print('请勿操作鼠标和键盘，否则将会造成程序错误,移动鼠标到窗口左上角以终止程序')
-      print('正在获取“',shortname,'”的公司全称：')
+      print('第{}行，正在获取“{}”的公司全称：'.format(row,shortname.strip()))
 
       try:
         # fullname = str(shortname) +'new'
         # engname = str(shortname) +'eng'
 
         fullname ,engname= gainfullname.search( shortname )
-        excelfile.write(0,row,1,fullname) 
-        excelfile.write(0,row,2,engname)
       except:
-        print('获取{}公司名称失败,将跳过并搜索下一个公司'.format(shortname))
+        pass
+      
       if fullname !='':
         print('获取成功，公司名称为：',fullname,engname)
+        excelfile.write(0,row,1,fullname) 
+        excelfile.write(0,row,2,engname)
+        compnum +=1
+      else:
+        print('获取“{}”公司名称失败,将跳过并搜索下一个公司'.format(shortname.strip()))
+    else:
+      print('第{}行，没有公司简称，无法搜索'.format(row))
 
+print('---------------------------------------------------------------------')
+print('共{}行，查询完毕，共获得{}个公司全称'.format(rows,compnum))
 
 # # 检查修改结果
 # excelfile  =  ExcelObject(excelpath)
