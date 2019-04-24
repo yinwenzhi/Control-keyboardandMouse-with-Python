@@ -8,6 +8,7 @@ class GainName():
         print('import gainName')
         # pyautogui.moveTo(70, 235) #把光标移动到(100, 200)位置
         pyautogui.click(70, 235)
+        
     def search( self,comnam ):
 
         # 滚动按钮、
