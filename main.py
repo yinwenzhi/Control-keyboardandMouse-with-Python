@@ -27,7 +27,7 @@ def dealOneExcelFile(excelFileName):
   #pcklfile='C:\\Users\\VI\\Desktop\\result.txt'
   # 'data\\'
   
-  print('excelFileName',excelFileName)
+  print('excelFileName：',excelFileName)
   try:
     excelfile  =  ExcelObject(excelFileName)
     print('excel file get')
