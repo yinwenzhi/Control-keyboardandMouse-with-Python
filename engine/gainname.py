@@ -5,7 +5,7 @@ import pandas as pd
 
 class GainName():
     def __init__(self):
-        print('import gainName')
+        # print('import gainName')
         # pyautogui.moveTo(70, 235) #把光标移动到(100, 200)位置
         pyautogui.click(220, 450)
 
@@ -120,7 +120,7 @@ class GainName():
         print('开始搜索')
         # 滚动按钮、
         print('scrolling...')
-        pyautogui.scroll(-1350, x=20, y=945)  # move mouse cursor to 100, 200, then scroll down 10 "clicks"
+        pyautogui.scroll(-800, x=20, y=945)  # move mouse cursor to 100, 200, then scroll down 10 "clicks"
         
         try:
             reset=pyautogui.locateOnScreen('engine\\anc\\简称.png')
@@ -138,7 +138,8 @@ class GainName():
         # 把光标移动到(100, 200)位置 并点击
         # pyautogui.click(525, 990)
         # pyautogui.PAUSE = 0.5
-        pyautogui.click(5, 90) #把光标移动到(100, 200)位置
+        pyautogui.moveTo(8,90)
+        pyautogui.click() #把光标移动到(100, 200)位置
         # 以拖拽方式复制公司信息
         pyautogui.dragTo(800,170, 1,button='left')#  按住鼠标左键，把鼠标拖拽到(100, 200)位置
 
@@ -151,9 +152,10 @@ class GainName():
         pyautogui.hotkey('ctrl', 'c')
         totalmessage = pyperclip.paste()   #把剪切板上的字符串复制到text
         #   pyautogui.moveTo(530, 70) #关闭公司详情页面
+        print('pyperclip.paste()  成功')
         pyautogui.doubleClick(530, 70)
 
-        totalname =  totalmessage.strip().split('\r\n',3)
+        totalname =  totalmessage.strip().split('\r\n')
 
         print(totalname)
         # idxth = 

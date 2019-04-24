@@ -27,10 +27,10 @@ def dealOneExcelFile(excelFileName):
   #pcklfile='C:\\Users\\VI\\Desktop\\result.txt'
   # 'data\\'
   
-  print('excelFileName',excelFileName)
+  print('excelFileName：',excelFileName)
   try:
     excelfile  =  ExcelObject(excelFileName)
-    print('excel file get')
+    print('excel file get:',excelFileName)
   except :
     print()
     print('++++++++++++++++++++++++++++++')
@@ -66,13 +66,14 @@ def dealOneExcelFile(excelFileName):
 
         print('---------------------------------------------------------------------')
         print('请勿操作鼠标和键盘，否则将会造成程序错误,移动鼠标到窗口左上角以终止程序')
+        print('文件：{}'.format(excelFileName))
         print('第{}行，正在获取“{}”的公司全称：'.format(row,shortname.strip()))
 
         try:
           # fullname = str(shortname) +'new'
           # engname = str(shortname) +'eng'
 
-          fullname ,engname= gainfullname.search( shortname )
+          fullname ,engname = gainfullname.search( shortname )
         except:
           pass
         
@@ -87,7 +88,7 @@ def dealOneExcelFile(excelFileName):
         print('第{}行，没有公司简称，无法搜索'.format(row))
 
   print('---------------------------------------------------------------------')
-  print('共{}行，查询完毕，共获得{}个公司全称'.format(rows,compnum))
+  print('文件{}：共{}行，查询完毕，共获得{}个公司全称'.format(excelFileName,rows,compnum))
 
   
   # # 检查修改结果
@@ -105,24 +106,26 @@ def dealOneExcelFile(excelFileName):
 def main():
 
   path = 'C:\\Users\\dai\\Desktop\\simul\\投资机构正在处理文件'
+  # path = 'C:\\Users\\dai\\Desktop\\simul\\测试'
 
   # 初始化程序
   print('starting...')
   print('如果把鼠标光标在屏幕左上角，程序就会停止')#如果把鼠标光标在屏幕左上角，PyAutoGUI函数就
-  pyautogui.PAUSE = 0.5
+  pyautogui.PAUSE = 0.3
   pyautogui.FAILSAFE = True #如果把鼠标光标在屏幕左上角，PyAutoGUI函数就会产生pyautogui.FailSafeException异常。
   screenWidth, screenHeight = pyautogui.size()
   # currentMouseX, currentMouseY = pyautogui.position()
   print('screenWidth, screenHeight = ',screenWidth, screenHeight )
-  
 
   names = getFileNames(path)
   for idx,name in  enumerate(names):
     print('***********************************************************************')
-    print('正在处理第{}个文件:{}'.format(idx+1,name))
+    print('正在处理第{}个文件:   {}   '.format(idx+1,name))
     name =  os.path.join(path, name)
     dealOneExcelFile(name)
-    print('第{}个文件{}处理完毕'.format(idx+1,name))
+    print('第{}个文件   {}   处理完毕'.format(idx+1,name))
 
 if __name__ == "__main__":
-  main()
+  pyautogui.FAILSAFE = True
+  while True:
+    main()
