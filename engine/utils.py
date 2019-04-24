@@ -1,10 +1,10 @@
 import pyautogui
 import pyperclip
-from aip import AipOcr
+# from aip import AipOcr
 
-from urllib.request import urlopen,Request
-from bs4 import BeautifulSoup
-import re
+# from urllib.request import urlopen,Request
+# from bs4 import BeautifulSoup
+# import re
 import xlrd
 import xlwt
 from xlutils.copy import copy
