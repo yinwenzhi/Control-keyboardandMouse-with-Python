@@ -2,6 +2,7 @@ import pyautogui
 import pyperclip
 # import matplotlib
 import pandas as pd
+import time
 
 class GainName():
     def __init__(self):
@@ -25,6 +26,22 @@ class GainName():
             if times == 3:
                 return False
         return imaloca
+
+    def findshown (self):
+        isshown = None
+        findshowntimes = 0
+        while not isshown:
+            findshowntimes +=1
+            pyautogui.doubleClick(500, 70)
+            isshown = pyautogui.locateOnScreen('engine\\anc\\概览.png')
+            if findshowntimes == 2:
+                break
+        if isshown:
+            print('详情页已出现，准备开始复制公司信息')
+            return True 
+        else:
+            print('详情页未出现，查询失败')
+            return False
 
     def search( self,comnam ):
 
@@ -76,85 +93,112 @@ class GainName():
         pyautogui.scroll(1500)
         try:
             reset1 = pyautogui.locateOnScreen('engine\\anc\\输入.png')
+            inputbuttonx, inputbuttony = pyautogui.center(reset1)
         except:
+            print('第一次查找输入框失败')
             reset1 = 0 
-        # try:
-        #     reset2 = pyautogui.locateOnScreen('engine\\anc\\输入2.png')
-        # except:
-        #     reset2 = 0
+            try:
+                reset2 = pyautogui.locateOnScreen('engine\\anc\\输入2.png')
+                inputbuttonx, inputbuttony = pyautogui.center(reset2)
+            except:
+                print('第二次查找输入框失败')
+                reset2 = 0
         # try:
         #     reset3 = pyautogui.locateOnScreen('engine\\anc\\输入2.png')
         # except:
         #     reset3 = 0
       
         # if not (reset1 and reset2 ):
-        if not (reset1):
-            # 任何一个元素没有找到就单击打开机构信息折叠栏
+        if  (reset1 or reset2):
+            # 任何一个元素找到就不进行单击打开机构信息折叠栏操作
             # pyautogui.moveTo(70, 235) #把光标移动到(100, 200)位置
+            pass    
+        else:
+            
             pyautogui.click(70, 235)
             print('打开折叠栏')
+            
         
+        
+        # pyautogui.click(inputbuttonx, inputbuttony)
         pyautogui.click(320, 288) # 点击输入框
-
+        print('点击输入框')
         pyperclip.copy(comnam)  #把text字符串中的字符复制到剪切板
         pyautogui.hotkey('ctrl', 'v')
         #把光标移动到(100, 200)位置 并点击
         #   pyautogui.moveTo(320, 325)
         pyautogui.moveTo(320, 325)
         pyautogui.click() # 确认输入选择
-
+        pyautogui.click()  #再次点击减少程序错误机率
         pyautogui.scroll(-300)
-
+        # pyautogui.PAUSE = 1
         try:
             reset=pyautogui.locateOnScreen('engine\\anc\\搜索.png')
             buttonx, buttony = pyautogui.center(reset)
-            pyautogui.click(buttonx, buttony) #开始搜索
+            pyautogui.moveTo(buttonx, buttony)
+            pyautogui.click() #开始搜索
 
-            print('查找搜索按钮失败，正在重试...')
+            # print('查找搜索按钮失败，正在重试...')
         except:
             reset=pyautogui.locateOnScreen('engine\\anc\\重置.png') #寻找重置按钮，以相对位置寻找搜索按钮
             buttonx, buttony = pyautogui.center(reset)
-            pyautogui.click(buttonx-150, buttony) #开始搜索
-            
-
+            pyautogui.moveTo(buttonx-150, buttony) #开始搜索
+            pyautogui.click() #开始搜索
+        # pyautogui.PAUSE = 0.5
         print('开始搜索')
         # 滚动按钮、
-        print('scrolling...')
-        pyautogui.scroll(-800, x=20, y=945)  # move mouse cursor to 100, 200, then scroll down 10 "clicks"
+        # print('scrolling...')
+        # pyautogui.scroll(-800, x=20, y=945)  # move mouse cursor to 100, 200, then scroll down 10 "clicks"
         
         try:
             reset=pyautogui.locateOnScreen('engine\\anc\\简称.png')
             buttonx, buttony = pyautogui.center(reset)
+            pyautogui.moveTo(buttonx-20, buttony+45)
+            pyautogui.click()
             pyautogui.click(buttonx-20, buttony+50) #
         except:
-            print('查找公司连接失败，正在重试...')
-            pyautogui.scroll(-100)
+            # print('查找公司连接失败，正在重试...') 
+            pyautogui.scroll(100)
+            pyautogui.scroll(-300)
             reset=pyautogui.locateOnScreen('engine\\anc\\类型.png')
             buttonx, buttony = pyautogui.center(reset)
-            pyautogui.click(buttonx-220, buttony+55) #
+            pyautogui.moveTo(buttonx-220, buttony+48)
+            pyautogui.click() #
+            pyautogui.click(buttonx-220, buttony+55)
         print('查找公司连接成功，正在获取公司信息...')   
         
 
         # 把光标移动到(100, 200)位置 并点击
         # pyautogui.click(525, 990)
         # pyautogui.PAUSE = 0.5
-        pyautogui.moveTo(8,90)
-        pyautogui.click() #把光标移动到(100, 200)位置
-        # 以拖拽方式复制公司信息
-        pyautogui.dragTo(800,170, 1,button='left')#  按住鼠标左键，把鼠标拖拽到(100, 200)位置
+        # time.sleep(1)
 
-        # 以shift方式
-        # pyautogui.keyDown('shift')  # hold down the shift key
-        # pyautogui.moveTo(5,90)
-        # pyautogui.click()
-        # pyautogui.keyUp('shift')    # release the shift key
+        if self.findshown():
+                
+            pyautogui.moveTo(8,90)
+            pyautogui.click() #把光标移动到(100, 200)位置
+            # 如果查找到“公司概览”说明信息页已经出现
 
-        pyautogui.hotkey('ctrl', 'c')
-        totalmessage = pyperclip.paste()   #把剪切板上的字符串复制到text
-        #   pyautogui.moveTo(530, 70) #关闭公司详情页面
-        print('pyperclip.paste()  成功')
-        pyautogui.doubleClick(530, 70)
+            # 以拖拽方式复制公司信息
+            pyautogui.dragTo(800,170, 1,button='left')#  按住鼠标左键，把鼠标拖拽到(100, 200)位置
+            time.sleep(0.5)
+            # 以shift方式
+            # pyautogui.keyDown('shift')  # hold down the shift key
+            # pyautogui.moveTo(5,90)
+            # pyautogui.click()
+            # pyautogui.keyUp('shift')    # release the shift key
+            # 以拖拽方式复制公司信息
+            # pyautogui.dragTo(800,170, 1,button='left')#  按住鼠标左键，把鼠标拖拽到(100, 200)位置
+            pyautogui.hotkey('ctrl', 'c')
+            
+            totalmessage = pyperclip.paste()   #把剪切板上的字符串复制到text
+            #   pyautogui.moveTo(530, 70) #关闭公司详情页面
+            # print('pyperclip.paste()  成功')
+            pyautogui.doubleClick(530, 70)
 
+        else :
+            pyautogui.doubleClick(530, 70)
+            return False
         totalname =  totalmessage.strip().split('\r\n')
 
         print(totalname)
