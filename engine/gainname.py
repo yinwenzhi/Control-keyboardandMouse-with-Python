@@ -9,7 +9,7 @@ class GainName():
         # print('import gainName')
         # pyautogui.moveTo(70, 235) #把光标移动到(100, 200)位置
         pyautogui.click(220, 450)
-
+        self.pageNow = 1
     def findreset(self,imgpath):
         imaloca = None
         times = 0
@@ -24,7 +24,8 @@ class GainName():
                 print('重置搜索信息失败，正在重试...')
                 pyautogui.scroll(-1000)
             if times == 3:
-                return False
+                pass
+                # return False
         return imaloca
 
     def findshown (self):
@@ -34,6 +35,8 @@ class GainName():
             findshowntimes +=1
             pyautogui.doubleClick(500, 70)
             isshown = pyautogui.locateOnScreen('engine\\anc\\概览.png')
+            # isshown = pyautogui.locateOnScreen('engine\\anc\\机构信息.png')
+
             if findshowntimes == 2:
                 break
         if isshown:
@@ -42,6 +45,69 @@ class GainName():
         else:
             print('详情页未出现，查询失败')
             return False
+
+    def setDate(self,beginDate,endDate):
+        pyautogui.click(220, 450)
+        
+        reset = self.findreset('engine\\anc\\重置.png')
+        buttonx, buttony = pyautogui.center(reset)
+        pyautogui.click(buttonx, buttony)
+        print('重置搜索')
+        pyautogui.scroll(1500)
+        isfindInput = 0
+       
+        while  not isfindInput:
+            try:
+                reset1 = pyautogui.locateOnScreen('engine\\anc\\输入.png')
+                inputbuttonx, inputbuttony = pyautogui.center(reset1)
+                isfindInput = 1 
+            except:
+                print('第一次查找输入框失败')
+                try:
+                    reset2 = pyautogui.locateOnScreen('engine\\anc\\输入3.png')
+                    inputbuttonx, inputbuttony = pyautogui.center(reset2)
+                except:
+                    print('第二次查找输入框失败')
+                    
+            if isfindInput != 1:
+                pyautogui.click(70, 235)
+                print('打开折叠栏')
+    
+        manulx = 505
+        manuly = 778
+        # 是否点击自定义
+        try:
+            dateTo = pyautogui.locateOnScreen('engine\\anc\\dateTo.png')
+            dateTox, dateToy = pyautogui.center(dateTo)
+        except:
+            pyautogui.click(manulx, manuly)
+            print('点击自定义')
+            dateTo = pyautogui.locateOnScreen('engine\\anc\\dateTo.png')
+            dateTox, dateToy = pyautogui.center(dateTo)
+        # 填入日期
+        # print('begin:',beginDate)
+        pyperclip.copy(beginDate)  #把text字符串中的字符复制到剪切板
+        pyautogui.click(manulx+80, manuly)
+        pyautogui.hotkey('ctrl', 'v')
+        # print('endDate:',endDate)
+        pyperclip.copy(endDate)  #把text字符串中的字符复制到剪切板
+        pyautogui.click(manulx+250, manuly)
+        pyautogui.hotkey('ctrl', 'v')
+        time.sleep(1)
+        try:
+            reset=pyautogui.locateOnScreen('engine\\anc\\搜索.png')
+            buttonx, buttony = pyautogui.center(reset)
+            pyautogui.moveTo(buttonx, buttony)
+            pyautogui.click() #开始搜索
+            # print('查找搜索按钮失败，正在重试...')
+        except:
+            reset=pyautogui.locateOnScreen('engine\\anc\\重置.png') #寻找重置按钮，以相对位置寻找搜索按钮
+            buttonx, buttony = pyautogui.center(reset)
+            pyautogui.moveTo(buttonx-150, buttony) #开始搜索
+            pyautogui.click() #开始搜索
+        # pyautogui.PAUSE = 0.5
+        print('开始搜索')
+        pyautogui.scroll(-1500)
 
     def search( self,comnam ):
 
@@ -98,7 +164,7 @@ class GainName():
             print('第一次查找输入框失败')
             reset1 = 0 
             try:
-                reset2 = pyautogui.locateOnScreen('engine\\anc\\输入2.png')
+                reset2 = pyautogui.locateOnScreen('engine\\anc\\输入3.png')
                 inputbuttonx, inputbuttony = pyautogui.center(reset2)
             except:
                 print('第二次查找输入框失败')
@@ -206,6 +272,81 @@ class GainName():
         for idx,string in enumerate(totalname):
             if string.find('公司') != -1:
                 idxth = idx 
+        chiname = totalname[0]
+        engname = totalname[1]
+                
+        return chiname , engname
+
+    def getNamebyLine(self,line):
+        # print('start ge company')
+        pyautogui.moveTo(8,90)
+        pyautogui.click()
+        pyautogui.scroll(-800)
+        firstx = 20
+        firsty = 180
+        nowx = firstx
+        nowy = firsty + (line-1)*32
+        # print('nowy',nowy)
+        pyautogui.moveTo(nowx, nowy) 
+        pyautogui.click()
+        # print('dianji:line',line)
+        if self.findshown():
+                
+            # 如果查找到“公司概览”说明信息页已经出现
+            pyautogui.moveTo(8,90)
+            pyautogui.click() 
+
+            # 以拖拽方式复制公司信息
+            pyautogui.dragTo(800,170, 1,button='left')#  按住鼠标左键，把鼠标拖拽到(100, 200)位置
+            time.sleep(0.5)
+            pyautogui.hotkey('ctrl', 'c')
+            
+            totalmessage = pyperclip.paste()   #把剪切板上的字符串复制到text
+            pyautogui.doubleClick(530, 70)
+
+        else :
+            pyautogui.doubleClick(530, 70)
+            return False
+        totalname =  totalmessage.strip().split('\r\n')
+
+        print('totalnema: ',totalname)
+        return totalname
+
+    def byPage(self,row,rows):
+        # pyautogui.click(220, 450)
+        # 是否是对应页
+        # print('bypage')
+        row -=3
+        p = row%25
+        if  p == 0:
+            page = row//25
+        else:
+            page = row//25+1
+        # print('page:',page)
+        if page == self.pageNow:
+            # print('pass')
+            pass
+        else:    
+            # 设置页数
+            pyautogui.scroll(-500)
+            goto=pyautogui.locateOnScreen('engine\\anc\\goto.png') 
+
+            buttonx, buttony = pyautogui.center(goto)
+            pyautogui.click(buttonx-30, buttony)
+            # 跳转到page
+            pyperclip.copy(page)  #把text字符串中的字符复制到剪切板
+            pyautogui.hotkey('ctrl', 'a')
+            pyautogui.hotkey('ctrl', 'v')
+            pyautogui.click(buttonx, buttony)
+            self.pageNow = page
+        line = row %25
+        if line ==0:
+            line =25
+        # print('line:',line)
+        print('第{}个公司，共{}个公司，对应第{}页第{}行'.format(row,rows-3,page,line))
+        totalname = self.getNamebyLine(line)
+        
+    
         chiname = totalname[0]
         engname = totalname[1]
                 
