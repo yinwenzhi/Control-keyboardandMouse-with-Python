@@ -124,7 +124,12 @@ def dealOneExcelFilebyDate(path):
   compnum = 0
 
   # 设置日期 
-  gainfullname.setDate(date[0],date[1])
+  isset = gainfullname.setDate(date[0],date[1])
+  if not isset:
+    print('重置失败')
+    gainfullname.restart()
+    return False
+  failednum = 0
 
   for row in range(rows):
     # 使用xldt判断是否写入
@@ -136,7 +141,7 @@ def dealOneExcelFilebyDate(path):
         print('---------------------------------------------------------------------')
         print('请勿操作鼠标和键盘，否则将会造成程序错误')
         print('文件：{}'.format(excelFileName))
-        print('第{}行，正在获取“{}”的公司全称：'.format(row,shortname.strip()))
+        print('第{}行，正在获取“{}”的公司全称：'.format(row+1,shortname.strip()))
 
         try:
           # fullname = str(shortname) +'new'
@@ -146,20 +151,26 @@ def dealOneExcelFilebyDate(path):
           # fullname ,engname = gainfullname.search(shortname)
 
         except:
-          pass
+          failednum +=1
         
         if fullname !='':
+          failednum = 0
           print('获取成功，公司名称为：',fullname,engname)
           excelfile.write(0,row,1,fullname) 
           excelfile.write(0,row,2,engname)
           compnum +=1
         else:
           print('获取“{}”公司名称失败,将跳过并搜索下一个公司'.format(shortname.strip()))
+          if failednum == 5:
+            gainfullname.restart()
+            return False 
       else:
-        print('第{}行，没有公司简称，无法搜索'.format(row))
+        print('第{}行，没有公司简称，无法搜索'.format(row+1))
 
   print('---------------------------------------------------------------------')
   print('文件{}：共{}行，查询完毕，共获得{}个公司全称'.format(excelFileName,rows,compnum))
+  
+  return True
 
 
 def main():
@@ -169,8 +180,8 @@ def main():
 
   # 初始化程序
   print('starting...')
-  # print('如果把鼠标光标在屏幕左上角，程序就会停止')#如果把鼠标光标在屏幕左上角，PyAutoGUI函数就
-  pyautogui.PAUSE = 0.5
+  print('如果把鼠标光标在屏幕左上角，程序就会停止')#如果把鼠标光标在屏幕左上角，PyAutoGUI函数就
+  pyautogui.PAUSE = 0.7
   pyautogui.FAILSAFE = True #如果把鼠标光标在屏幕左上角，PyAutoGUI函数就会产生pyautogui.FailSafeException异常。
   screenWidth, screenHeight = pyautogui.size()
   # currentMouseX, currentMouseY = pyautogui.position()
@@ -184,9 +195,14 @@ def main():
     # get company name by search
     name =  os.path.join(path, name)
     # dealOneExcelFilebyName(name)
-
-    # get company name by data
-    dealOneExcelFilebyDate(name)
+    isend = None
+    filetimes = 0
+    while not isend:
+      filetimes +=1
+      # get company name by data
+      isend = dealOneExcelFilebyDate(name)
+      if filetimes ==3:
+        break
 
     print('第{}个文件   {}   处理完毕'.format(idx+1,name))
 

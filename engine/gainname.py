@@ -24,8 +24,8 @@ class GainName():
                 print('重置搜索信息失败，正在重试...')
                 pyautogui.scroll(-1000)
             if times == 3:
-                pass
-                # return False
+                # pass
+                return False
         return imaloca
 
     def findshown (self):
@@ -37,7 +37,7 @@ class GainName():
             isshown = pyautogui.locateOnScreen('engine\\anc\\概览.png')
             # isshown = pyautogui.locateOnScreen('engine\\anc\\机构信息.png')
 
-            if findshowntimes == 2:
+            if findshowntimes == 5:
                 break
         if isshown:
             print('详情页已出现，准备开始复制公司信息')
@@ -46,14 +46,67 @@ class GainName():
             print('详情页未出现，查询失败')
             return False
 
+    def findGoTo (self):
+        isshown = None
+        findshowntimes = 0
+
+        while not isshown:
+            pyautogui.click(723, 959)
+            pyautogui.scroll(-800)
+            print('scrolliingdown')
+            findshowntimes +=1
+            pyautogui.doubleClick(500, 70)
+            # isshown = pyautogui.locateOnScreen('engine\\anc\\goto.png')
+            isshown = pyautogui.locateOnScreen('engine\\anc\\goto.png')
+            # if 5 > self.pageNow >=1 :
+            if isshown != None:
+                break
+
+            isshown = pyautogui.locateOnScreen('engine\\anc\\goto5.png')
+            # if 9 > self.pageNow >=5:
+            if isshown != None:
+                break
+
+            isshown = pyautogui.locateOnScreen('engine\\anc\\goto9.png')
+            if isshown != None:
+            # if 35 > self.pageNow >=9:
+                break
+            
+            isshown = pyautogui.locateOnScreen('engine\\anc\\goto10.png')
+            # if  self.pageNow >=35:
+            if isshown != None:
+                break
+            
+            isshown = pyautogui.locateOnScreen('engine\\anc\\goto38.png')
+            # if  self.pageNow >=35:
+            if isshown != None:
+                break
+            
+            isshown = pyautogui.locateOnScreen('engine\\anc\\goto39.png')
+            # if  self.pageNow >=35:
+            if isshown != None:
+                break
+
+            if findshowntimes == 3:
+                break
+        if isshown:
+            print('公司列表页已出现')
+            return isshown 
+        else:
+            print('公司列表页未出现，查询失败')
+            return False
+
     def setDate(self,beginDate,endDate):
         pyautogui.click(220, 450)
         
         reset = self.findreset('engine\\anc\\重置.png')
-        buttonx, buttony = pyautogui.center(reset)
-        pyautogui.click(buttonx, buttony)
-        print('重置搜索')
-        pyautogui.scroll(1500)
+        if reset:
+            buttonx, buttony = pyautogui.center(reset)
+            pyautogui.click(buttonx, buttony)
+            print('重置搜索')
+            pyautogui.scroll(1500)
+        else :
+            return False
         isfindInput = 0
        
         while  not isfindInput:
@@ -108,6 +161,7 @@ class GainName():
         # pyautogui.PAUSE = 0.5
         print('开始搜索')
         pyautogui.scroll(-1500)
+        return True
 
     def search( self,comnam ):
 
@@ -279,9 +333,9 @@ class GainName():
 
     def getNamebyLine(self,line):
         # print('start ge company')
-        pyautogui.moveTo(8,90)
+        pyautogui.moveTo(723, 959)
         pyautogui.click()
-        pyautogui.scroll(-800)
+        pyautogui.scroll(-1500)
         firstx = 20
         firsty = 180
         nowx = firstx
@@ -295,7 +349,7 @@ class GainName():
             # 如果查找到“公司概览”说明信息页已经出现
             pyautogui.moveTo(8,90)
             pyautogui.click() 
-
+            print('开始复制公司信息')
             # 以拖拽方式复制公司信息
             pyautogui.dragTo(800,170, 1,button='left')#  按住鼠标左键，把鼠标拖拽到(100, 200)位置
             time.sleep(0.5)
@@ -323,13 +377,18 @@ class GainName():
         else:
             page = row//25+1
         # print('page:',page)
+        self.page = page
         if page == self.pageNow:
-            # print('pass')
+            print('page =pageNow')
             pass
         else:    
             # 设置页数
+            print('set page :',page)
+
             pyautogui.scroll(-500)
-            goto=pyautogui.locateOnScreen('engine\\anc\\goto.png') 
+            # goto=pyautogui.locateOnScreen('engine\\anc\\goto.png') 
+            goto = self.findGoTo()
+            print('set page :',page)
 
             buttonx, buttony = pyautogui.center(goto)
             pyautogui.click(buttonx-30, buttony)
@@ -343,7 +402,8 @@ class GainName():
         if line ==0:
             line =25
         # print('line:',line)
-        print('第{}个公司，共{}个公司，对应第{}页第{}行'.format(row,rows-3,page,line))
+        # if self.findGoTo():
+        print('第{}个公司，共{}个公司，对应第{}页第{}行'.format(row,rows-4,page,line))
         totalname = self.getNamebyLine(line)
         
     
@@ -351,3 +411,21 @@ class GainName():
         engname = totalname[1]
                 
         return chiname , engname
+
+    def restart(self):
+        pyautogui.moveTo(930, 7)
+        pyautogui.click() # 关闭软件
+        time.sleep(1)
+        pyautogui.moveTo(573, 310)
+        pyautogui.click()
+        pyautogui.moveTo(495, 265)
+        pyautogui.doubleClick() # 双击打开软件
+        time.sleep(5)
+        pyautogui.moveTo(1230, 650)
+        pyautogui.click() # 登录
+        time.sleep(5)
+        pyautogui.hotkey('win', 'left')
+        time.sleep(1)
+        pyautogui.moveTo(30, 35)
+        pyautogui.click()  # 打开机构页
+        time.sleep(2)
