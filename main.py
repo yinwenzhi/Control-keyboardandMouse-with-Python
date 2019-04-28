@@ -169,8 +169,8 @@ def main():
 
   # 初始化程序
   print('starting...')
-  # print('如果把鼠标光标在屏幕左上角，程序就会停止')#如果把鼠标光标在屏幕左上角，PyAutoGUI函数就
-  pyautogui.PAUSE = 0.5
+  print('如果把鼠标光标在屏幕左上角，程序就会停止')#如果把鼠标光标在屏幕左上角，PyAutoGUI函数就
+  pyautogui.PAUSE = 0.7
   pyautogui.FAILSAFE = True #如果把鼠标光标在屏幕左上角，PyAutoGUI函数就会产生pyautogui.FailSafeException异常。
   screenWidth, screenHeight = pyautogui.size()
   # currentMouseX, currentMouseY = pyautogui.position()
